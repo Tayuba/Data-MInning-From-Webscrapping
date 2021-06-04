@@ -1,2 +1,2 @@
-# Data-MInning-From-Webscrapping
+# Data-Minning-From-Webscrapping
 Webscrapping

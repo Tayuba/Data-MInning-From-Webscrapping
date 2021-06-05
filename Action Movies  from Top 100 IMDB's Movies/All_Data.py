@@ -151,8 +151,8 @@ response = requests.get(movies1_50)
 soup = BeautifulSoup(response.content, "html.parser")
 
 # travers through the soup
-director_soup = soup.select(selector="p a")
-print(director_soup.g)
+director_soup = soup.find_all(name="p")
+print(director_soup)
 
 # Create a list
 director_list = []

@@ -199,7 +199,7 @@ rating_soup = soup.find_all(name="div", class_="inline-block ratings-imdb-rating
 rating_list =[]
 
 # fill in first 50
-for idx in range(0, len(rating_soup)-1):
+for idx in range(0, len(rating_soup)):
     rating = rating_soup[idx].text
     rating = rating.replace(" ", "").replace("\n","")
     rating_list.append(rating)
@@ -209,7 +209,7 @@ response = requests.get(movies51_100)
 soup = BeautifulSoup(response.content, "html.parser")
 
 # append the next 50
-for idx in range(0, len(rating_soup)-1):
+for idx in range(0, len(rating_soup)):
     rating = rating_soup[idx].text
     rating = rating.replace(" ", "").replace("\n","")
     rating_list.append(rating)
@@ -220,8 +220,40 @@ rating_list_int = [float(i) for i in rating_list]
 # Create Series file
 Rating = pd.Series(rating_list_int, name="Rating")
 print(Rating, "\n")
-# print(rating_list_int)
 
+#----------------------------------------------------Duration-------------------------------------------------------------
+movies1_50 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc"
+response = requests.get(movies1_50)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# travers through the soup
+duration_soup = soup.find_all(name="span", class_="runtime")
+
+# Create a list
+duration_list = []
+
+# fill in first 50
+for idx in range(0, len(duration_soup)):
+    duration = duration_soup[idx].text
+    duration = duration.replace("min", "")
+    duration_list.append(duration)
+
+movies51_100 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc&start=51&ref_=adv_nxt"
+response = requests.get(movies51_100)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# append next 50
+for idx in range(0, len(duration_soup)):
+    duration = duration_soup[idx].text
+    duration = duration.replace("min", "")
+    duration_list.append(duration)
+
+duration_list_int = [int(i) for i in duration_list]
+
+# Create Series file
+Duration = pd.Series(duration_list_int, name="Rating")
+print(Duration, "\n")
+# print(duration_list_int)
 #----------------------------------------------------All Data Into DataFrame--------------------------------------------
 movies_dict_data = {
     "Movie Name": names_list,
@@ -229,9 +261,17 @@ movies_dict_data = {
     "Release Date": Release_Date,
     "Director Name": Director_Names,
     "Rating": rating_list_int,
-    "Stars(Actors)": Star_Names,
+    "Duration": Duration,
     "Genre": names_of_genre,
+    "Stars(Actors)": Star_Names,
 }
 
 df = pd.DataFrame(movies_dict_data)
-print(df)
+# print(df)
+action_rows = df.loc[df["Genre"].str.contains("Action")]
+# print(action_rows)
+
+# Normalized max min (rating/
+
+rate_dur_norm = action_rows[["Rating","Duration"]]
+print(rate_dur_norm)

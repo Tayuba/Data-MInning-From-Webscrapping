@@ -271,7 +271,12 @@ df = pd.DataFrame(movies_dict_data)
 action_rows = df.loc[df["Genre"].str.contains("Action")]
 # print(action_rows)
 
-# Normalized max min (rating/
-
+# Normalized max min (rating/ duration)
 rate_dur_norm = action_rows[["Rating","Duration"]]
-print(rate_dur_norm)
+rate_dur_norm_df = (rate_dur_norm-rate_dur_norm.min()) / (rate_dur_norm.max() - rate_dur_norm.min())
+print(rate_dur_norm_df, "\n")
+
+# Normalized max min (rating/ Release Date)
+rate_date_norm = action_rows[["Rating","Release Date"]]
+rate_date_norm_df = (rate_date_norm-rate_date_norm.min()) / (rate_date_norm.max() - rate_date_norm.min())
+print(rate_date_norm_df)

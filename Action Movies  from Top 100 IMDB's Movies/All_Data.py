@@ -68,7 +68,7 @@ movie_types_series = pd.Series(names_of_genre, name="Genre")
 print(movie_types_series, "\n")
 
 
-#----------------------------------------------------Description of Movies--------------------------------------------
+#----------------------------------------------------Description of Movies---------------------------------------------
 movies1_50 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc"
 response = requests.get(movies1_50)
 soup = BeautifulSoup(response.content, "html.parser")
@@ -151,20 +151,87 @@ response = requests.get(movies1_50)
 soup = BeautifulSoup(response.content, "html.parser")
 
 # travers through the soup
-director_soup = soup.find_all(name="p")
-print(director_soup)
+director_soup = soup.find_all(name="p", class_="")
 
 # Create a list
 director_list = []
+star_list = []
 
+# fill it with first 50
+for idx in range(0, len(director_soup)):
+    directors = director_soup[idx].text
+    direct_star = directors.split("|")
+    director1 = (direct_star[0].split(":")[1]).replace("\n","")
+    director = director_list.append(director1)
+    star1 = (direct_star[1].split(":")[1]).replace("\n","")
+    star = star_list.append(star1)
+
+movies51_100 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc&start=51&ref_=adv_nxt"
+response = requests.get(movies51_100)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# append the next 50
+for idx in range(0, len(director_soup)):
+    directors = director_soup[idx].text
+    direct_star = directors.split("|")
+    director1 = (direct_star[0].split(":")[1]).replace("\n","")
+    director = director_list.append(director1)
+    star1 = (direct_star[1].split(":")[1]).replace("\n","")
+    star = star_list.append(star1)
+
+
+# Create Series file
+Director_Names = pd.Series(director_list, name="Director Names")
+print(Director_Names, "\n")
+
+# Create Series file
+Star_Names = pd.Series(star_list, name="Director Names")
+print(Star_Names, "\n")
+
+#----------------------------------------------------Rating-------------------------------------------------------------
+movies1_50 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc"
+response = requests.get(movies1_50)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# travers through the soup
+rating_soup = soup.find_all(name="div", class_="inline-block ratings-imdb-rating")
+
+rating_list =[]
+
+# fill in first 50
+for idx in range(0, len(rating_soup)-1):
+    rating = rating_soup[idx].text
+    rating = rating.replace(" ", "").replace("\n","")
+    rating_list.append(rating)
+
+movies51_100 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc&start=51&ref_=adv_nxt"
+response = requests.get(movies51_100)
+soup = BeautifulSoup(response.content, "html.parser")
+
+# append the next 50
+for idx in range(0, len(rating_soup)-1):
+    rating = rating_soup[idx].text
+    rating = rating.replace(" ", "").replace("\n","")
+    rating_list.append(rating)
+
+# Convert str to int
+rating_list_int = [float(i) for i in rating_list]
+
+# Create Series file
+Rating = pd.Series(rating_list_int, name="Rating")
+print(Rating, "\n")
+# print(rating_list_int)
 
 #----------------------------------------------------All Data Into DataFrame--------------------------------------------
 movies_dict_data = {
     "Movie Name": names_list,
     "Description": Description_Series,
     "Release Date": Release_Date,
+    "Director Name": Director_Names,
+    "Rating": rating_list_int,
+    "Stars(Actors)": Star_Names,
     "Genre": names_of_genre,
 }
 
 df = pd.DataFrame(movies_dict_data)
-# print(df)
+print(df)

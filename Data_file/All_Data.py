@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import matplotlib.pyplot as plt
 
 #----------------------------------------------------Data For Name Of The Movies----------------------------------------
 movies1_50 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc"
@@ -215,10 +216,10 @@ for idx in range(0, len(rating_soup)):
     rating_list.append(rating)
 
 # Convert str to int
-rating_list_int = [float(i) for i in rating_list]
+rating_list_float = [float(i) for i in rating_list]
 
 # Create Series file
-Rating = pd.Series(rating_list_int, name="Rating")
+Rating = pd.Series(rating_list_float, name="Rating")
 print(Rating, "\n")
 
 #----------------------------------------------------Duration-------------------------------------------------------------
@@ -260,23 +261,35 @@ movies_dict_data = {
     "Description": Description_Series,
     "Release Date": Release_Date,
     "Director Name": Director_Names,
-    "Rating": rating_list_int,
+    "Rating": rating_list_float,
     "Duration": Duration,
     "Genre": names_of_genre,
     "Stars(Actors)": Star_Names,
 }
 
 df = pd.DataFrame(movies_dict_data)
-# print(df)
+print(df)
 action_rows = df.loc[df["Genre"].str.contains("Action")]
-# print(action_rows)
+print(action_rows)
 
 # Normalized max min (rating/ duration)
 rate_dur_norm = action_rows[["Rating","Duration"]]
 rate_dur_norm_df = (rate_dur_norm-rate_dur_norm.min()) / (rate_dur_norm.max() - rate_dur_norm.min())
 print(rate_dur_norm_df, "\n")
 
-# Normalized max min (rating/ Release Date)
+# Normalized mean (rating/ Release Date)
 rate_date_norm = action_rows[["Rating","Release Date"]]
-rate_date_norm_df = (rate_date_norm-rate_date_norm.min()) / (rate_date_norm.max() - rate_date_norm.min())
+rate_date_norm_df = (rate_date_norm-rate_date_norm.mean()) / (rate_date_norm.std())
 print(rate_date_norm_df)
+
+action_rows.plot(kind="bar",x="Release Date",y="Rating", color="blue")
+plt.title("Rating Movies/ Year of Release")
+plt.show()
+
+action_rows.plot(kind="bar",x="Director Name",y="Rating", color="red")
+plt.title("Rating Movies/ Director Names")
+plt.show()
+
+action_rows.plot(kind="bar",x="Stars(Actors)",y="Rating", color="orange")
+plt.title("Rating Movies/ Stars(Actors)")
+plt.show()

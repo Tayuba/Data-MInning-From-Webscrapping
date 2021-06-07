@@ -11,6 +11,7 @@ soup = BeautifulSoup(response.content, "html.parser")
 # travers through the soup
 names_soup = soup.find_all(name="h3")
 
+
 # create a list
 names_list = []
 
@@ -105,7 +106,7 @@ for idx in range(0, len(descrip_soup)):
 
 # Create Series file
 Description_Series = pd.Series(Discrip_list, name="Description")
-print(Description_Series, "\n")
+# print(Description_Series, "\n")
 
 
 #----------------------------------------------------Release Date------------------------------------------------------
@@ -144,7 +145,7 @@ release_date_int = [int(i) for i in release_date]
 
 # Create Series file
 Release_Date = pd.Series(release_date_int, name="Release Date")
-print(Release_Date, "\n")
+# print(Release_Date, "\n")
 
 #----------------------------------------------------Director Nammes----------------------------------------------------
 movies1_50 = "https://www.imdb.com/search/title/?groups=top_100&sort=user_rating,asc"
@@ -254,7 +255,7 @@ duration_list_int = [int(i) for i in duration_list]
 # Create Series file
 Duration = pd.Series(duration_list_int, name="Rating")
 print(Duration, "\n")
-# print(duration_list_int)
+print(duration_list_int)
 #----------------------------------------------------All Data Into DataFrame--------------------------------------------
 movies_dict_data = {
     "Movie Name": names_list,
@@ -280,9 +281,9 @@ print(rate_dur_norm_df, "\n")
 # Normalized mean (rating/ Release Date)
 rate_date_norm = action_rows[["Rating","Release Date"]]
 rate_date_norm_df = (rate_date_norm-rate_date_norm.mean()) / (rate_date_norm.std())
-print(rate_date_norm_df)
 
-action_rows.plot(kind="bar",x="Release Date",y="Rating", color="blue")
+
+rate_date_norm_df.plot(kind="scatter",x="Release Date", y="Rating", color="blue")
 plt.title("Rating Movies/ Year of Release")
 plt.show()
 
@@ -290,6 +291,6 @@ action_rows.plot(kind="bar",x="Director Name",y="Rating", color="red")
 plt.title("Rating Movies/ Director Names")
 plt.show()
 
-action_rows.plot(kind="bar",x="Stars(Actors)",y="Rating", color="orange")
+action_rows.plot(kind="hist",x="Stars(Actors)",y="Rating", color="orange")
 plt.title("Rating Movies/ Stars(Actors)")
 plt.show()
